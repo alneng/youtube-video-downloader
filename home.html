@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>YouTube Video Downloader</title>
+	<link rel="stylesheet" href="./home.css" type="text/css">
+</head>
+
+<body>
+	<div id="home-frame">
+		<h1>YouTube Video Downloader</h1>
+		<input id="input" type="text" placeholder="YouTube Video URL">
+		<button id="continue-btn">Continue</button>
+		<div id="info-container" style="visibility: hidden;">
+			<h3><b id="title"></b> by <b id="channel"></b></h3>
+			<table class="table">
+				<tr id="table-row"></tr>
+			</table>
+			<button id="download-btn">Download</button>
+		</div>
+	</div>
+
+	<script>
+		var url = '';
+		var title = '';
+		var channel = '';
+
+		document.getElementById('input').addEventListener('keydown', (event) => {
+			if (event.keyCode === 13) document.getElementById('continue-btn').click();
+		});
+		document.getElementById('continue-btn').addEventListener('click', () => {
+			if (document.getElementById('input').value != '') {
+				fetch(`/api/getVideoFormats?url=${document.getElementById('input').value}`)
+					.then(response => response.json())
+					.then(data => {
+						if (data.error) document.getElementById('input').value = ''
+						else {
+							url = data.url;
+							title = data.title;
+							channel = data.channelName;
+
+							document.getElementById('info-container').style.visibility = 'visible';
+							const tableRow = document.getElementById('table-row');
+
+							while (tableRow.firstChild) tableRow.firstChild.remove();
+							const submitButton = document.getElementById("download-btn");
+							submitButton.disabled = false;
+							submitButton.innerHTML = 'Download';
+
+							document.getElementById('title').innerHTML = data.title;
+							document.getElementById('channel').innerHTML = data.channelName;
+
+							[...data.formats].forEach((format) => {
+								const column = document.createElement('td');
+								column.classList = 'format';
+								column.style.width = `calc(100% / ${[...data.formats].length})`;
+								column.innerHTML = `${format.resolution}<br>${format.fps}`;
+								column.dataset.itag = format.itag;
+
+								column.addEventListener('click', () => {
+									[...document.getElementsByClassName('selected')].forEach((elem) => {
+										elem.classList.remove('selected');
+									});
+									column.classList.add('selected');
+								})
+
+								tableRow.append(column);
+							});
+
+							tableRow.firstChild.classList.add('selected');
+						}
+					})
+					.catch(error => {
+						console.error(error);
+					});
+			}
+		});
+		document.getElementById('download-btn').addEventListener('click', () => {
+			const submitButton = document.getElementById("download-btn");
+			submitButton.disabled = true;
+			submitButton.innerHTML = '<div class="spinner-container"><div class="spinner"></div></div>'
+
+			var selectedItag = [...document.getElementsByClassName('selected')][0].dataset.itag;
+			fetch(`/api/downloadVideo?url=${url}&itag=${selectedItag}&fileName=${title} - ${channel}`)
+				.then(response => {
+					if (response.ok) {
+						return response.blob();
+					}
+					throw new Error('Network response was not ok');
+				})
+				.then(blob => {
+					const url = URL.createObjectURL(blob);
+					const a = document.createElement('a');
+					a.style.display = 'none';
+					a.href = url;
+					a.download = title;
+					document.body.appendChild(a);
+					a.click();
+					setTimeout(() => {
+						document.body.removeChild(a);
+						URL.revokeObjectURL(url);
+					}, 100);
+					submitButton.disabled = false;
+					submitButton.innerHTML = 'Download Successful!';
+				})
+				.catch(err => {
+					console.error('There was a problem downloading the video: ', err);
+				});
+		})
+	</script>
+</body>
+
+</html>
