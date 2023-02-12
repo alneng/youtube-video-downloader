@@ -3,6 +3,7 @@ const readline = require('readline');
 
 const ytdl = require('ytdl-core');
 const ffmpeg = require('ffmpeg-static');
+const fs = require('fs');
 
 function verifyVideoUrl(url) {
 	return ytdl.validateURL(url);
@@ -39,7 +40,21 @@ function decipherFormats(formats) {
 			});
 		}
 	});
+	allFormats.push({
+		'itag': 909,
+		'resolution': 'Audio Only',
+		'fps': 'mp3'
+	});
 	return allFormats;
+
+}
+
+async function downloadAudioOnly(ref, fileName) {
+
+	return new Promise((resolve, reject) => {
+		ytdl(ref, { quality: 'highestaudio' }).pipe(fs.createWriteStream(`public/${fileName}.mp3`))
+			.on('close', () => { resolve(); });
+	});
 
 }
 
@@ -99,7 +114,7 @@ async function downloadAndCombineStreams(ref, videoQualityItag, fileName) {
 			// Keep encoding
 			'-c:v', 'copy',
 			// Define output file
-			`public/videos/${fileName}.mp4`,
+			`public/${fileName}.mp4`,
 		], {
 			windowsHide: true,
 			stdio: [
@@ -139,4 +154,4 @@ async function downloadAndCombineStreams(ref, videoQualityItag, fileName) {
 
 }
 
-module.exports = { verifyVideoUrl, getVideoInfo, downloadAndCombineStreams }
+module.exports = { verifyVideoUrl, getVideoInfo, downloadAudioOnly, downloadAndCombineStreams }

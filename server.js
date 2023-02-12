@@ -1,10 +1,8 @@
 const express = require('express');
 const app = express();
-const http = require('http');
-const server = http.createServer(app);
-const fs = require('fs')
+const fs = require('fs');
 
-const { verifyVideoUrl, getVideoInfo, downloadAndCombineStreams } = require('./videoHelper.js');
+const { verifyVideoUrl, getVideoInfo, downloadAudioOnly, downloadAndCombineStreams } = require('./videoHelper.js');
 
 function generateRandomString(length) {
 	let result = '';
@@ -39,23 +37,41 @@ app.get('/api/downloadVideo', async (req, res) => {
 
 		console.log('Requested download for: ' + req.query['fileName']);
 		const fileName = generateRandomString(12);
-		downloadAndCombineStreams(urlInput, req.query.itag, fileName)
-			.then(() => {
-				res.set({
-					'Content-Type': 'video/mp4',
-					'Content-Disposition': `attachment; filename=${fileName}.mp4`
+
+		if (req.query.itag == 909) {
+			downloadAudioOnly(urlInput, fileName)
+				.then(() => {
+					res.set({
+						'Content-Type': 'audio/mpeg',
+						'Content-Disposition': `attachment; filename=${fileName}.mp3`
+					});
+					fs.createReadStream(`public/${fileName}.mp3`).pipe(res);
+					fs.unlink(`public/${fileName}.mp3`, err => {
+						if (err) res.status(500).send({ error: err });
+					});
+				}).catch(err => {
+					res.status(400).send({ error: err });
 				});
-				fs.createReadStream(`public/videos/${fileName}.mp4`).pipe(res);
-				fs.unlink(`public/videos/${fileName}.mp4`, err => {
-					if (err) res.status(500).send({ error: err })
+		} else {
+			downloadAndCombineStreams(urlInput, req.query.itag, fileName)
+				.then(() => {
+					res.set({
+						'Content-Type': 'video/mp4',
+						'Content-Disposition': `attachment; filename=${fileName}.mp4`
+					});
+					fs.createReadStream(`public/${fileName}.mp4`).pipe(res);
+					fs.unlink(`public/${fileName}.mp4`, err => {
+						if (err) res.status(500).send({ error: err });
+					});
+				}).catch(err => {
+					res.status(400).send({ error: err });
 				});
-			}).catch(err => {
-				res.status(400).send({ error: err });
-			});
+		}
+
 	}
 	else res.status(400).send({ error: 'Bad request' });
 });
 
-server.listen(3000, () => {
+app.listen(3000, () => {
 	console.log('listening on *:3000');
 });
