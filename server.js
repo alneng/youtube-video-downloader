@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const fs = require('fs');
+const path = require('path');
 
 const { verifyVideoUrl, getVideoInfo, downloadAudioOnly, downloadAndCombineStreams } = require('./videoHelper.js');
 
@@ -15,7 +16,7 @@ function generateRandomString(length) {
 }
 
 // make static files available at ./file.extension
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/home.html');
