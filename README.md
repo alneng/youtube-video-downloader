@@ -4,5 +4,7 @@ Downloading videos from YouTube without the proper permissions may be a violatio
 
 ## How to Run
 1. Install dependencies with `npm install`
-2. Run `node server.js` to start the Express server
+2. Run `npm run local` to start the Express server
 3. Go to http://localhost:3000/ to access the app
+
+*Note: The vercel deployment does not work because the server is unable to download content (serverless function), so feel free to ignore `vercel.json`
