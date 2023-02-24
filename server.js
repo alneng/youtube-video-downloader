@@ -72,6 +72,4 @@ app.get('/api/downloadVideo', async (req, res) => {
 	else res.status(400).send({ error: 'Bad request' });
 });
 
-app.listen(3000, () => {
-	console.log('listening on *:3000');
-});
+module.exports = app;
