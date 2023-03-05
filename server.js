@@ -33,10 +33,10 @@ app.get('/api/getVideoFormats', (req, res) => {
 });
 
 app.get('/api/downloadVideo', async (req, res) => {
-	const urlInput = req.query.url;
-	if (urlInput && verifyVideoUrl(urlInput) && req.query.itag && req.query['fileName']) {
+	if (req.query.url && verifyVideoUrl(req.query.url) && req.query.itag && req.query.fileName && req.query.contentLength) {
+		const urlInput = `${req.query.url}&range=0-${req.query.contentLength}`;
 
-		console.log('Requested download for: ' + req.query['fileName']);
+		console.log('Requested download for: ' + req.query.fileName);
 		const fileName = generateRandomString(12);
 
 		if (req.query.itag == 909) {
@@ -47,9 +47,11 @@ app.get('/api/downloadVideo', async (req, res) => {
 						'Content-Disposition': `attachment; filename=${fileName}.mp3`
 					});
 					fs.createReadStream(`public/${fileName}.mp3`).pipe(res);
-					fs.unlink(`public/${fileName}.mp3`, err => {
-						if (err) res.status(500).send({ error: err });
-					});
+					setTimeout(() => {
+						fs.unlink(`public/${fileName}.mp3`, err => {
+							if (err) res.status(500).send({ error: err });
+						});
+					}, 1000)
 				}).catch(err => {
 					res.status(400).send({ error: err });
 				});
@@ -61,9 +63,11 @@ app.get('/api/downloadVideo', async (req, res) => {
 						'Content-Disposition': `attachment; filename=${fileName}.mp4`
 					});
 					fs.createReadStream(`public/${fileName}.mp4`).pipe(res);
-					fs.unlink(`public/${fileName}.mp4`, err => {
-						if (err) res.status(500).send({ error: err });
-					});
+					setTimeout(() => {
+						fs.unlink(`public/${fileName}.mp4`, err => {
+							if (err) res.status(500).send({ error: err });
+						});
+					}, 1000)
 				}).catch(err => {
 					res.status(400).send({ error: err });
 				});

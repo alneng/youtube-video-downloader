@@ -20,7 +20,8 @@ async function getVideoInfo(url) {
 				'channelName': info.videoDetails.author.name,
 				'channelId': info.videoDetails.channelId,
 				'formats': decipherFormats(info.formats),
-				'url': url
+				'url': url,
+				'contentLength': info.videoDetails.lengthSeconds
 			});
 		});
 	});

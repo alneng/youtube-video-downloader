@@ -24,6 +24,7 @@
 		var url = '';
 		var title = '';
 		var channel = '';
+		var length = '';
 
 		document.getElementById('input').addEventListener('keydown', (event) => {
 			if (event.keyCode === 13) document.getElementById('continue-btn').click();
@@ -38,6 +39,7 @@
 							url = data.url;
 							title = data.title;
 							channel = data.channelName;
+							length = data.contentLength;
 
 							document.getElementById('info-container').style.visibility = 'visible';
 							const tableRow = document.getElementById('table-row');
@@ -81,7 +83,7 @@
 			submitButton.innerHTML = '<div class="spinner-container"><div class="spinner"></div></div>'
 
 			var selectedItag = [...document.getElementsByClassName('selected')][0].dataset.itag;
-			fetch(`/api/downloadVideo?url=${url}&itag=${selectedItag}&fileName=${title} - ${channel}`)
+			fetch(`/api/downloadVideo?url=${url}&itag=${selectedItag}&fileName=${title} - ${channel}&contentLength=${length}`)
 				.then(response => {
 					if (response.ok) {
 						return response.blob();
