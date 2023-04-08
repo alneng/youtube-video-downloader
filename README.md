@@ -1,7 +1,3 @@
-```
-YouTube is currently throttling download speeds, find a temporary fix here: https://github.com/wildrxge/youtube-video-downloader/issues/1#issue-1610305782
-```
-
 # youtube-video-downloader
 
 Downloading videos from YouTube without the proper permissions may be a violation of YouTube Terms of Service. Use at your own discretion.
