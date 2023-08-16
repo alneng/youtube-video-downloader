@@ -8,6 +8,6 @@
 		"ytdl-core": "^4.11.5"
 	},
 	"scripts": {
-		"local": "node app"
+		"start": "node app"
 	}
 }
