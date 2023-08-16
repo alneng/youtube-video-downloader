@@ -1,115 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+	<meta charset="UTF-8" />
 	<title>YouTube Video Downloader</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.3/dist/tailwind.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="./home.css" type="text/css">
+	<meta property="og:title" content="YouTube Video Downloader">
+	<meta property="og:description" content="Save videos from YouTube. Use is subject to YouTube's Terms of Service">
+	<meta name="description" content="Save videos from YouTube. Use is subject to YouTube's Terms of Service">
+	<meta name="keywords" content="youtube, video, downloader">
 </head>
 
-<body>
-	<div id="home-frame">
-		<h1>YouTube Video Downloader</h1>
-		<input id="input" type="text" placeholder="YouTube Video URL">
-		<button id="continue-btn">Continue</button>
-		<div id="info-container" style="visibility: hidden;">
-			<h3><b id="title"></b> by <b id="channel"></b></h3>
-			<table class="table">
-				<tr id="table-row"></tr>
-			</table>
-			<button id="download-btn">Download</button>
+<body class="font-colfaxai text-white bg-gray-900">
+	<nav class="bg-gray-900 p-4 flex justify-between items-center">
+		<div class="text-lg font-semibold">YouTube Video Downloader</div>
+		<a href="https://github.com/wildrxge/youtube-video-downloader" target="_blank">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+				stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+				className="feather feather-github">
+				<path
+					d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+				</path>
+			</svg>
+		</a>
+	</nav>
+	<div class="bg-gray-900 px-4 md:px-12 py-4 items-center text-center mt-12">
+		<div id="video-search">
+			<h1 class="text-4xl :text-5xl">YouTube Video Downloader</h1>
+			<input class="mt-10 mb-6 p-4 rounded w-4/5 md:w-1/2 text-black" type="text" placeholder="YouTube Video URL"
+				id="input"><br>
+			<button id="continue-btn" class="font-semibold py-2 px-4 rounded bg-blue-500">Continue</button>
 		</div>
+		<div id="info-container" class="mt-16 w-full md:max-w-4xl mx-auto md:flex hidden">
+			<div class="w-full md:w-1/2 px-4 mb-4 md:mb-0">
+				<h3 class="text-xl"><b id="title">Title</b> by <b id="channel">channel</b></h3>
+				<img class="mt-2 max-w-full md:max-w-sm mx-auto" src="" alt="Video Thumbnail" id="thumbnail">
+			</div>
+			<div class="w-full md:w-1/2 px-4">
+				<table class="table-auto text-left w-full">
+					<tbody id="table-body"></tbody>
+				</table>
+				<button id="download-btn" class="mt-6 font-semibold py-2 px-4 rounded bg-blue-500">Download</button>
+			</div>
+		</div>
+
 	</div>
 
-	<script>
-		var url = '';
-		var title = '';
-		var channel = '';
-
-		document.getElementById('input').addEventListener('keydown', (event) => {
-			if (event.keyCode === 13) document.getElementById('continue-btn').click();
-		});
-
-		document.getElementById('continue-btn').addEventListener('click', () => {
-			if (document.getElementById('input').value != '') {
-				fetch(`/api/getVideoFormats?url=${document.getElementById('input').value}`)
-					.then(response => response.json())
-					.then(data => {
-						if (data.error) document.getElementById('input').value = ''
-						else {
-							url = data.url;
-							title = data.title;
-							channel = data.channelName;
-
-							document.getElementById('info-container').style.visibility = 'visible';
-							const tableRow = document.getElementById('table-row');
-
-							while (tableRow.firstChild) tableRow.firstChild.remove();
-							const submitButton = document.getElementById("download-btn");
-							submitButton.disabled = false;
-							submitButton.innerHTML = 'Download';
-
-							document.getElementById('title').innerHTML = data.title;
-							document.getElementById('channel').innerHTML = data.channelName;
-
-							[...data.formats].forEach((format) => {
-								const column = document.createElement('td');
-								column.classList = 'format';
-								column.style.width = `calc(100% / ${[...data.formats].length})`;
-								column.innerHTML = `${format.resolution}<br>${format.fps}`;
-								column.dataset.itag = format.itag;
-
-								column.addEventListener('click', () => {
-									[...document.getElementsByClassName('selected')].forEach((elem) => {
-										elem.classList.remove('selected');
-									});
-									column.classList.add('selected');
-								})
-
-								tableRow.append(column);
-							});
-
-							tableRow.firstChild.classList.add('selected');
-						}
-					})
-					.catch(error => {
-						console.error(error);
-					});
-			}
-		});
-
-		document.getElementById('download-btn').addEventListener('click', () => {
-			const submitButton = document.getElementById("download-btn");
-			submitButton.disabled = true;
-			submitButton.innerHTML = '<div class="spinner-container"><div class="spinner"></div></div>'
-
-			var selectedItag = [...document.getElementsByClassName('selected')][0].dataset.itag;
-			fetch(`/api/downloadVideo?url=${url}&itag=${selectedItag}&videoName=${title} - ${channel}`)
-				.then(response => {
-					if (response.ok) {
-						return response.blob();
-					}
-					throw new Error('Network response was not ok');
-				})
-				.then(blob => {
-					const url = URL.createObjectURL(blob);
-					const a = document.createElement('a');
-					a.style.display = 'none';
-					a.href = url;
-					a.download = title;
-					document.body.appendChild(a);
-					a.click();
-					setTimeout(() => {
-						document.body.removeChild(a);
-						URL.revokeObjectURL(url);
-					}, 100);
-					submitButton.disabled = false;
-					submitButton.innerHTML = 'Download Successful!';
-				})
-				.catch(err => {
-					console.error('There was a problem downloading the video: ', err);
-				});
-		})
-	</script>
+	<script src="./app.js"></script>
 </body>
 
 </html>

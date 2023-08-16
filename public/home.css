@@ -1,194 +1,55 @@
 @font-face {
-    font-family: "ColfaxAI";
-    src: url(./fonts/ColfaxAIRegular.woff2) format("woff2"),
-        url(./fonts/ColfaxAIRegular.woff) format("woff");
-    font-weight: normal;
-    font-style: normal;
+	font-family: "ColfaxAI";
+	src: url(./fonts/ColfaxAIRegular.woff2) format("woff2"),
+		url(./fonts/ColfaxAIRegular.woff) format("woff");
+	font-weight: normal;
+	font-style: normal;
 }
 
 @font-face {
-    font-family: "ColfaxAI";
-    src: url(./fonts/ColfaxAIBold.woff2) format("woff2"),
-        url(./fonts/ColfaxAIBold.woff) format("woff");
-    font-weight: bold;
-    font-style: normal;
+	font-family: "ColfaxAI";
+	src: url(./fonts/ColfaxAIBold.woff2) format("woff2"),
+		url(./fonts/ColfaxAIBold.woff) format("woff");
+	font-weight: bold;
+	font-style: normal;
 }
 
-body {
-    margin: 0;
-    padding: 0;
-    font-family: "ColfaxAI", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, sans-serif;
-    background-color: #37393e;
-    color: #fff;
-}
-
-#home-frame {
-    position: fixed;
-    width: 750px;
-    height: 650px;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-}
-
-h1 {
-    position: fixed;
-    left: 50%;
-    top: 8%;
-    transform: translate(-50%, -8%);
-    width: 100%;
-    text-align: center;
-}
-
-/* Hide the scrollbar */
-::-webkit-scrollbar {
-    width: 0;
-    height: 0;
-}
-
-#input {
-    position: fixed;
-    left: 50%;
-    top: 25%;
-    transform: translate(-50%, -25%);
-    border-style: solid;
-    font-family: inherit;
-    font-size: 16px;
-    height: 52px;
-    line-height: 1.1;
-    outline: none;
-    padding: 0 16px;
-    width: calc(100% - 128px);
-    color: #2d333a;
-    background-color: #fff;
-    transition: box-shadow .2s ease-in-out, border-color .2s ease-in-out;
-    border-radius: 3px;
-    border: 1px solid #c2c8d0;
-}
-
-button {
-    appearance: auto;
-    writing-mode: horizontal-tb !important;
-    text-rendering: auto;
-    color: buttontext;
-    letter-spacing: normal;
-    word-spacing: normal;
-    line-height: normal;
-    text-transform: none;
-    text-indent: 0px;
-    text-shadow: none;
-    display: inline-block;
-    text-align: center;
-    align-items: flex-start;
-    cursor: default;
-    box-sizing: border-box;
-    background-color: buttonface;
-    margin: 0em;
-    border-width: 2px;
-    border-style: outset;
-    border-color: buttonborder;
-    border-image: initial;
-    padding: 4px 16px;
-    min-height: 52px;
-    font-family: inherit;
-    font-size: 16px;
-    font-weight: 400;
-    outline: none;
-    cursor: pointer;
-    color: #fff;
-    border: 0;
-    border-radius: 3px;
-    transition: background-color .25s ease-in-out, box-shadow .25s ease-in-out;
-    background-color: #10a37f;
-}
-
-button:hover {
-    background-color: #0e9272;
-}
-
-#continue-btn {
-    position: fixed;
-    left: 50%;
-    top: 36.5%;
-    transform: translate(-50%, -36.5%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: calc(100% - 128px + 32px);
-}
-
-#info-container {
-    position: fixed;
-    left: 50%;
-    top: 70%;
-    transform: translate(-50%, -70%);
-    text-align: center;
-    width: calc(100% - 128px);
-}
-
-h3 {
-    font-weight: normal;
-}
-
-.table {
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% + 32px);
-    border-collapse: collapse;
-}
-
-.table td,
-format {
-    border: 1px solid white;
-    height: 75px;
-    padding: 8px;
-    text-align: center;
-}
-
-.table td:hover {
-    background-color: #37393e;
-    color: #fff;
-    cursor: pointer;
-}
-
-#download-btn {
-    position: relative;
-    top: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% + 32px);
+.font-colfaxai {
+	font-family: "ColfaxAI", -apple-system, BlinkMacSystemFont, "Segoe UI",
+		Helvetica, sans-serif;
 }
 
 .selected {
-    background-color: rgba(255, 255, 255, 0.5) !important;
-    color: #000 !important;
+	background-color: white !important;
+	color: black !important;
 }
 
 .spinner-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
 }
 
 .spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    animation: spin 1s linear infinite;
+	border: 4px solid #f3f3f3;
+	border-top: 4px solid #3498db;
+	border-radius: 50%;
+	width: 30px;
+	height: 30px;
+	animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
+	0% {
+		transform: rotate(0deg);
+	}
 
-    100% {
-        transform: rotate(360deg);
-    }
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.hidden {
+	display: none !important;
 }
